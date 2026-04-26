@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Моя малая родина — Оренбург</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Georgia', serif;
+            background: #f5f3e8;
+            color: #2c3e2f;
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1a4d1a 0%, #0d2e0d 100%);
+            color: #f0e6c5;
+            text-align: center;
+            padding: 2.5rem 0;
+            border-bottom: 4px solid #c9a03d;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        .subhead {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-top: 0.5rem;
+        }
+
+        nav {
+            background: #0d2e0d;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        nav ul li a {
+            display: block;
+            padding: 1rem 1.8rem;
+            color: #f0e6c5;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        nav ul li a:hover {
+            background: #c9a03d;
+            color: #0d2e0d;
+        }
+
+        section {
+            padding: 3rem 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: #1a4d1a;
+            border-left: 6px solid #c9a03d;
+            padding-left: 1.2rem;
+            margin-bottom: 1.8rem;
+            font-weight: 600;
+        }
+
+        h3 {
+            color: #1a4d1a;
+            margin: 1.2rem 0 0.8rem;
+            font-size: 1.4rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+        }
+
+        .card-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #c9a03d;
+        }
+
+        .card h3 {
+            padding: 0 1.2rem 0;
+            font-size: 1.3rem;
+        }
+
+        .card p {
+            padding: 0 1.2rem 1.2rem;
+            color: #444;
+        }
+
+        .card-icon-text {
+            padding: 1.2rem 1.2rem 0;
+            color: #c9a03d;
+            font-size: 1.1rem;
+        }
+
+        .fact {
+            background: #e8f0e8;
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin: 1.8rem 0;
+            border-left: 6px solid #c9a03d;
+        }
+
+        .quote {
+            font-style: italic;
+            font-size: 1.1rem;
+            background: #fff3cf;
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin: 1.8rem 0;
+            text-align: center;
+            color: #1a4d1a;
+        }
+
+        #map {
+            height: 500px;
+            width: 100%;
+            border-radius: 20px;
+            margin: 1.5rem 0;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            z-index: 1;
+        }
+
+        footer {
+            background: #0d2e0d;
+            color: #f0e6c5;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            h2 { font-size: 1.5rem; }
+            nav ul li a { padding: 0.8rem 1rem; font-size: 0.9rem; }
+            .container { padding: 0 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <h1>Оренбург</h1>
+        <p class="subhead">Моя малая родина — город-крепость на границе Европы и Азии</p>
+    </div>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="#history"><i class="fas fa-book-open"></i> История</a></li>
+        <li><a href="#places"><i class="fas fa-landmark"></i> Достопримечательности</a></li>
+        <li><a href="#people"><i class="fas fa-star"></i> Знаменитые люди</a></li>
+        <li><a href="#culture"><i class="fas fa-scarf"></i> Культура</a></li>
+        <li><a href="#map"><i class="fas fa-map"></i> Карта</a></li>
+    </ul>
+</nav>
+
+<main class="container">
+
+    <section id="history">
+        <h2><i class="fas fa-book-open"></i> Трёхжды рождённый: история Оренбурга</h2>
+        
+        <p><strong>Оренбург</strong> — город-крепость, который закладывали трижды. Первая попытка была предпринята в <strong>1735 году</strong> у места впадения реки Орь в Яик (ныне Урал). Именно от названия реки Орь и произошло имя города — «Оренбург», что означает «город на Ори».</p>
+        
+        <p>Вторая попытка основания города произошла в <strong>1737 году</strong> в урочище Красная Гора, однако место признали неудачным из-за частых наводнений и отсутствия хороших пастбищ. Город простоял там всего несколько лет.</p>
+        
+        <p>И только в <strong>1743 году</strong> город окончательно перенесли на то место, где он находится сегодня — на высоком правом берегу Урала. Оренбургская крепость стала самой мощной на всей юго-восточной границе Российской империи. Её стены помнят посольства из Хивы, Бухары, Кашгара и далёкого Китая.</p>
+        
+        <div class="fact">
+            <i class="fas fa-history"></i> <strong>Интересный факт:</strong> В 1773–1774 годах Оренбург выдержал полугодовую осаду армии Емельяна Пугачёва. Город не сдался, а самозванец был разбит. Позже здесь собирал материалы для «Капитанской дочки» Александр Пушкин, который лично приезжал в Оренбург в 1833 году.
+        </div>
+        
+        <p>В XIX веке Оренбург стал важнейшим центром торговли с Азией. Через город шли караваны с чаем, шёлком, хлопком и пряностями. В 1869 году здесь открылся знаменитый Оренбургский пуховязальный промысел, который прославил город на весь мир.</p>
+        
+        <p>В XX веке Оренбург (в 1938–1957 годах город назывался Чкалов) стал индустриальным центром. Здесь работали крупные заводы, а в 1955 году было открыто Оренбургское газоконденсатное месторождение, сделавшее город одним из энергетических центров страны.</p>
+        
+        <div class="quote">
+            <i class="fas fa-quote-left"></i> «Оренбург — это удивительный город, в котором смешались Европа и Азия, православие и ислам, казачьи традиции и купеческая культура.»
+        </div>
+    </section>
+
+    <section id="places">
+        <h2><i class="fas fa-landmark"></i> Главные достопримечательности</h2>
+        <div class="grid">
+            
+            <div class="card">
+                <img class="card-img" src="most.jpg" alt="Мост Европа-Азия" 
+                     onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231a4d1a%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22white%22%20text-anchor%3D%22middle%22%3E%D0%9C%D0%BE%D1%81%D1%82%3C%2Ftext%3E%3C%2Fsvg%3E'">
+                <div class="card-icon-text"><i class="fas fa-bridge"></i> Символ Оренбурга</div>
+                <h3>Мост Европа — Азия</h3>
+                <p>Пешеходный мост через реку Урал. Именно здесь проходит условная граница между Европой и Азией. Туристы часто приезжают сюда, чтобы постоять одной ногой в Европе, другой — в Азии. Мост длиной 220 метров был построен в 1982 году и стал одним из главных символов Оренбурга.</p>
+            </div>
+            
+            <div class="card">
+                <img class="card-img" src="karavan.jpg" alt="Караван-Сарай" 
+                     onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%23333%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22white%22%20text-anchor%3D%22middle%22%3E%D0%9A%D0%B0%D1%80%D0%B0%D0%B2%D0%B0%D0%BD-%D0%A1%D0%B0%D1%80%D0%B0%D0%B9%3C%2Ftext%3E%3C%2Fsvg%3E'">
+                <div class="card-icon-text"><i class="fas fa-mosque"></i> Архитектурное наследие</div>
+                <h3>Караван-Сарай</h3>
+                <p>Уникальный архитектурный ансамбль XIX века, построенный в 1837–1846 годах в мавританском стиле. Комплекс включает мечеть, минарет, медресе и гостиный двор. Караван-Сарай был подарком императора Николая I башкирскому кантону и стал символом дружбы народов.</p>
+            </div>
+            
+            <div class="card">
+                <img class="card-img" src="gostiny.jpg" alt="Гостиный двор" 
+                     onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%23444%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22white%22%20text-anchor%3D%22middle%22%3E%D0%93%D0%BE%D1%81%D1%82%D0%B8%D0%BD%D1%8B%D0%B9%20%D0%B4%D0%B2%D0%BE%D1%80%3C%2Ftext%3E%3C%2Fsvg%3E'">
+                <div class="card-icon-text"><i class="fas fa-store"></i> Торговая история</div>
+                <h3>Гостиный двор</h3>
+                <p>Старейший торговый комплекс России, основанный в 1750-х годах. Здание было восстановлено в 1990-х годах. Сегодня здесь располагается музей истории Оренбурга, сувенирные лавки, где можно купить знаменитые оренбургские пуховые платки.</p>
+            </div>
+            
+            <div class="card">
+                <img class="card-img" src="belovka.jpg" alt="Беловка" 
+                     onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%23555%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22white%22%20text-anchor%3D%22middle%22%3E%D0%91%D0%B5%D0%BB%D0%BE%D0%B2%D0%BA%D0%B0%3C%2Ftext%3E%3C%2Fsvg%3E'">
+                <div class="card-icon-text"><i class="fas fa-tree"></i> Любимое место отдыха</div>
+                <h3>Беловка (Зауральная роща)</h3>
+                <p>Живописный парк на левом берегу Урала. Здесь растут вековые дубы и сосны, бьют родники с чистейшей водой. Зимой Беловка становится центром лыжного спорта. Летом это излюбленное место для прогулок и пикников.</p>
+            </div>
+            
+            <div class="card">
+                <img class="card-img" src="sobor.jpg" alt="Никольский собор" 
+                     onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%23444%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22white%22%20text-anchor%3D%22middle%22%3E%D0%A1%D0%BE%D0%B1%D0%BE%D1%80%3C%2Ftext%3E%3C%2Fsvg%3E'">
+                <div class="card-icon-text"><i class="fas fa-church"></i> Духовный центр</div>
+                <h3>Никольский кафедральный собор</h3>
+                <p>Главный православный храм Оренбурга, построенный в 1886 году в византийско-русском стиле. Пятикупольный собор с 37-метровой колокольней — одно из красивейших зданий города. Здесь хранится чудотворная икона Табынской Божьей Матери.</p>
+            </div>
+            
+            <div class="card">
+                <img class="card-img" src="sovetskaya.jpg" alt="Улица Советская" 
+                     onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%23666%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22white%22%20text-anchor%3D%22middle%22%3E%D0%A3%D0%BB%D0%B8%D1%86%D0%B0%3C%2Ftext%3E%3C%2Fsvg%3E'">
+                <div class="card-icon-text"><i class="fas fa-walking"></i> Главная пешеходная улица</div>
+                <h3>Улица Советская</h3>
+                <p>Главная пешеходная артерия Оренбурга. Здесь сохранились купеческие особняки XIX века, памятники архитектуры, фонтаны, уютные кафе и магазины. Прогулка по Советской погружает в атмосферу старого Оренбурга.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="people">
+        <h2><i class="fas fa-star"></i> Люди, прославившие Оренбург</h2>
+        <div class="grid">
+            <div class="card">
+                <img class="card-img" src="gagarin.jpg" alt="Юрий Гагарин" 
+                     onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231a4d1a%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22white%22%20text-anchor%3D%22middle%22%3E%D0%93%D0%B0%D0%B3%D0%B0%D1%80%D0%B8%D0%BD%3C%2Ftext%3E%3C%2Fsvg%3E'">
+                <div class="card-icon-text"><i class="fas fa-rocket"></i> Первый космонавт</div>
+                <h3>Юрий Гагарин</h3>
+                <p>Первый космонавт Земли учился в Оренбургском высшем военном авиационном училище лётчиков в 1955–1957 годах. Именно здесь, в Оренбурге, Гагарин совершил свой первый самостоятельный полёт на самолёте МиГ-15. В городе установлен памятник Гагарину.</p>
+            </div>
+            
+            <div class="card">
+                <img class="card-img" src="prokhorov.jpg" alt="Александр Прохоров" 
+                     onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%23333%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22white%22%20text-anchor%3D%22middle%22%3E%D0%9F%D1%80%D0%BE%D1%85%D0%BE%D1%80%D0%BE%D0%B2%3C%2Ftext%3E%3C%2Fsvg%3E'">
+                <div class="card-icon-text"><i class="fas fa-microscope"></i> Нобелевский лауреат</div>
+                <h3>Александр Прохоров</h3>
+                <p>Выдающийся советский физик, лауреат Нобелевской премии 1964 года за создание лазера. Александр Михайлович родился в Оренбурге в 1916 году. Его имя носит одна из улиц города.</p>
+            </div>
+            
+            <div class="card">
+                <img class="card-img" src="rostropovich.jpg" alt="Мстислав Ростропович" 
+                     onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%23444%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22white%22%20text-anchor%3D%22middle%22%3E%D0%A0%D0%BE%D1%81%D1%82%D1%80%D0%BE%D0%BF%D0%BE%D0%B2%D0%B8%D1%87%3C%2Ftext%3E%3C%2Fsvg%3E'">
+                <div class="card-icon-text"><i class="fas fa-music"></i> Великий музыкант</div>
+                <h3>Мстислав Ростропович</h3>
+                <p>Великий виолончелист и дирижёр, народный артист СССР. Родился в Оренбурге в 1927 году. В Оренбурге ежегодно проходит фестиваль классической музыки «Ростропович. Лица и голоса».</p>
+            </div>
+            
+            <div class="card">
+                <img class="card-img" src="krylov.jpg" alt="Иван Крылов" 
+                     onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%23555%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22white%22%20text-anchor%3D%22middle%22%3E%D0%9A%D1%80%D1%8B%D0%BB%D0%BE%D0%B2%3C%2Ftext%3E%3C%2Fsvg%3E'">
+                <div class="card-icon-text"><i class="fas fa-feather-alt"></i> Великий баснописец</div>
+                <h3>Иван Крылов</h3>
+                <p>Великий русский баснописец в 1785–1788 годах служил в Оренбурге чиновником. Именно здесь он написал свои первые басни и комедии. В Оренбурге есть сквер имени Крылова.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="culture">
+        <h2><i class="fas fa-scarf"></i> Оренбургский пуховый платок — символ России</h2>
+        <div class="grid">
+            <div class="card">
+                <img class="card-img" src="shawl.jpg" alt="Пуховый платок" 
+                     onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%23666%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22white%22%20text-anchor%3D%22middle%22%3E%D0%9F%D0%BB%D0%B0%D1%82%D0%BE%D0%BA%3C%2Ftext%3E%3C%2Fsvg%3E'">
+                <div class="card-icon-text"><i class="fas fa-hand-sparkles"></i> Паутинка из козьего пуха</div>
+                <h3>Оренбургский пуховый платок</h3>
+                <p>Оренбургский пух — самый тонкий в мире, его толщина составляет всего 16–18 микрон. Паутинка — тончайший платок — весит 60–80 граммов и свободно проходит сквозь обручальное кольцо.</p>
+            </div>
+            
+            <div class="card">
+                <img class="card-img" src="goat.jpg" alt="Оренбургская коза" 
+                     onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%23777%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22white%22%20text-anchor%3D%22middle%22%3E%D0%9A%D0%BE%D0%B7%D0%B0%3C%2Ftext%3E%3C%2Fsvg%3E'">
+                <div class="card-icon-text"><i class="fas fa-paw"></i> Уникальная порода</div>
+                <h3>Оренбургская коза</h3>
+                <p>Уникальная порода коз была выведена в Оренбургской губернии в XIX веке. Только у этих коз пух такой тонкий, прочный и тёплый.</p>
+            </div>
+        </div>
+        
+        <div class="fact">
+            <i class="fas fa-hand-sparkles"></i> <strong>Традиция:</strong> Каждый платок — это ручная работа. Вязание платка-паутинки занимает от двух недель до двух месяцев. Узоры и орнаменты передаются из поколения в поколение.
+        </div>
+        
+        <div class="fact">
+            <i class="fas fa-trophy"></i> <strong>Мировое признание:</strong> В 1850-х годах оренбургские пуховые платки представлялись на международных выставках в Лондоне и Париже, где получили золотые медали.
+        </div>
+    </section>
+
+    <section id="map">
+        <h2><i class="fas fa-map"></i> Карта достопримечательностей Оренбурга</h2>
+        <p>На карте отмечены основные достопримечательности города. Нажмите на маркер, чтобы увидеть подробную информацию. Названия достопримечательностей подписаны прямо на карте.</p>
+        <div id="map"></div>
+        <p style="font-size:0.85rem; margin-top:8px; color:#555;">
+            <i class="fas fa-info-circle"></i> Данные карты предоставлены проектом OpenStreetMap. 
+            Вы можете приближать и отдалять карту, нажимать на маркеры для получения подробной информации.
+        </p>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <p><i class="fas fa-graduation-cap"></i> Проект по информационным технологиям: «Моя малая родина — Оренбург»</p>
+        <p><i class="fas fa-user"></i> Студент Ефименко Алексей группы 517 | 2026 год</p>
+           </div>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var map = L.map('map', { attributionControl: false }).setView([51.7688, 55.0970], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            minZoom: 10
+        }).addTo(map);
+
+        L.control.attribution({ prefix: false }).addTo(map);
+        L.control.scale({ metric: true, imperial: false }).addTo(map);
+
+        var places = [
+            { lat: 51.7319, lng: 55.1012, name: "Мост Европа-Азия", desc: "Пешеходный мост через реку Урал. Граница между Европой и Азией. Построен в 1982 году.", address: "Пешеходный мост через Урал" },
+            { lat: 51.7750, lng: 55.1010, name: "Караван-Сарай", desc: "Архитектурный комплекс в мавританском стиле. Построен в 1837-1846 годах.", address: "Парковый проспект" },
+            { lat: 51.7688, lng: 55.0970, name: "Гостиный двор", desc: "Старейший торговый комплекс России (1750-е годы).", address: "улица Советская, 3" },
+            { lat: 51.7772, lng: 55.0935, name: "Памятник Юрию Гагарину", desc: "Памятник первому космонавту у лётного училища.", address: "бульвар Юрия Гагарина" },
+            { lat: 51.7270, lng: 55.1020, name: "Беловка (Зауральная роща)", desc: "Парк на левом берегу Урала с вековыми дубами.", address: "левый берег реки Урал" },
+            { lat: 51.7542, lng: 55.0988, name: "Никольский кафедральный собор", desc: "Главный православный храм Оренбурга, построен в 1886 году.", address: "улица Чкалова" },
+            { lat: 51.7665, lng: 55.0960, name: "Улица Советская", desc: "Главная пешеходная улица с купеческими особняками XIX века.", address: "улица Советская" },
+            { lat: 51.7700, lng: 55.1050, name: "Оренбургский драматический театр", desc: "Один из старейших театров Урала, основан в 1856 году.", address: "улица Советская, 52" },
+            { lat: 51.7560, lng: 55.0920, name: "Музей изобразительных искусств", desc: "Коллекция оренбургских пуховых платков XIX-XX веков.", address: "переулок Каширина, 29" },
+            { lat: 51.7600, lng: 55.1000, name: "Сквер имени Крылова", desc: "Сквер с памятником Ивану Крылову.", address: "пересечение улиц Советской и Крылова" }
+        ];
+
+        places.forEach(function(place) {
+            var marker = L.marker([place.lat, place.lng]).addTo(map);
+            marker.bindPopup('<b><i class="fas fa-map-marker-alt"></i> ' + place.name + '</b><br><i class="fas fa-location-dot"></i> ' + place.address + '<br><i class="fas fa-info-circle"></i> ' + place.desc);
+            marker.bindTooltip(place.name, { permanent: true, direction: 'top', offset: [0, -10], className: 'custom-tooltip' }).openTooltip();
+        });
+
+        var style = document.createElement('style');
+        style.textContent = '.custom-tooltip { background: rgba(26, 77, 26, 0.85); color: #f0e6c5; border: 1px solid #c9a03d; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: bold; white-space: nowrap; font-family: "Segoe UI", sans-serif; } .leaflet-popup-content-wrapper { border-radius: 12px; border-left: 4px solid #c9a03d; } .leaflet-popup-content { font-size: 14px; line-height: 1.5; min-width: 220px; }';
+        document.head.appendChild(style);
+    });
+</script>
+
+</body>
+</html>
